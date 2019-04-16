@@ -10,28 +10,29 @@ import org.junit.jupiter.api.Test;
 
 class StopWordsTest {
 	
-	ArrayList<String> StopWordsList;
+	ArrayList<String> stopWordsList;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		StopWordsList = new ArrayList<String>();
-		StopWords.addStopWord(StopWordsList, "tEst");
-		StopWords.addStopWord(StopWordsList, "word");
-		StopWords.addStopWord(StopWordsList, "Stop");
+		stopWordsList = new ArrayList<String>();
+		StopWords.addStopWord(stopWordsList, "tEst");
+		StopWords.addStopWord(stopWordsList, "word");
+		StopWords.addStopWord(stopWordsList, "Stop");
+		StopWords.addStopWord(stopWordsList, "The");
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
-		StopWordsList = null;
+		stopWordsList = null;
 	}
 
 	@Test
 	void test() {
-        assertTrue(StopWords.IsStopWord(StopWordsList, "TEST"));
-        assertTrue(StopWords.IsStopWord(StopWordsList, "word"));
-        assertTrue(StopWords.IsStopWord(StopWordsList, "stoP"));
-        assertFalse(StopWords.IsStopWord(StopWordsList, "field2"));
-        assertFalse(StopWords.IsStopWord(StopWordsList, "field3"));
+        assertTrue(StopWords.IsStopWord(stopWordsList, "TEST"));
+        assertTrue(StopWords.IsStopWord(stopWordsList, "word"));
+        assertTrue(StopWords.IsStopWord(stopWordsList, "stoP"));
+        assertFalse(StopWords.IsStopWord(stopWordsList, "field2"));
+        assertFalse(StopWords.IsStopWord(stopWordsList, "field3"));
 	}
 
 }

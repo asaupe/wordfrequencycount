@@ -23,6 +23,7 @@ class StemmingTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		stemRules = null;
 	}
 
 	@Test
