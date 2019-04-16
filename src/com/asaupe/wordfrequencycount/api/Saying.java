@@ -16,7 +16,7 @@ public class Saying {
     public Saying(long id, String content) {
         this.id = id;
         this.content = content;
-    }
+    } 
 
     @JsonProperty
     public long getId() {
