@@ -25,7 +25,7 @@ public class FileProcessor {
 		wordCount.setStopWord(StopWords.IsStopWord(stopWords, wordCount.getWord()));
 		//TODO: Think about if stem word is also stop word (weird edge case).
 		if (!wordCount.isStopWord()) {
-			wordCount.setStemWords(Stemming.stemWords(stemRules, word));
+			wordCount.setStemWords(Stemming.stemWords(stemRules, wordCount.getWord()));
 		}
 		if (originalWord == null) {
 			wordCount.addActualCount();
@@ -36,7 +36,7 @@ public class FileProcessor {
 		wordCounts.put(wordCount.getWord(), wordCount);
 		
 		for (String stemWord:wordCount.getStemWords()) {
-			processStemWord(wordCounts, stemWord, word);
+			processStemWord(wordCounts, stemWord, wordCount.getWord());
 		}
 	}
 	
