@@ -30,6 +30,7 @@ public class StopWords {
 	    		if (line.trim().startsWith("#")) continue;
 	    		stopWords.add(line);
 	    	}   
+	    	scanner.close();
         } catch(Exception ex) {
 			System.out.println(ex.getMessage());
 		}

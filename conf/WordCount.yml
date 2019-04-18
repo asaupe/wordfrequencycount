@@ -1,4 +1,9 @@
-template: Hello, %s!
-defaultName: Arne
 stopWordsPath: ./loading/stopword.txt
 stemRulesPath: ./loading/stemRules.txt
+connectionString: mongodb+srv://arne:16isSixteen@arnetest-gtgp9.mongodb.net/test?retryWrites=true
+database: ArneTest
+documentPath: ./documents/
+
+#Collections
+wordCountCollection: wordCounts
+fileCollection: files

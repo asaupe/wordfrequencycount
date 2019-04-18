@@ -3,14 +3,24 @@ package com.asaupe.wordfrequencycount;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import com.asaupe.wordfrequencycount.resources.HelloWorld;
+
+import com.asaupe.wordfrequencycount.resources.FileResource;
+import com.asaupe.wordfrequencycount.resources.WordCountResource;
 import com.asaupe.wordfrequencycount.util.StemRule;
 import com.asaupe.wordfrequencycount.util.StopWords;
-import com.google.gson.Gson;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
-import com.asaupe.wordfrequencycount.health.TemplateHealthCheck;
+import org.bson.Document;
+
+import com.asaupe.wordfrequencycount.file.FileProcessor;
+import com.asaupe.wordfrequencycount.file.PersistResults;
+import com.asaupe.wordfrequencycount.file.WordCount;
 
 public class MainApplication extends Application<MainConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -30,26 +40,36 @@ public class MainApplication extends Application<MainConfiguration> {
     @Override
     public void run(MainConfiguration configuration,
                     Environment environment) {
-        final HelloWorld resource = new HelloWorld(
-                configuration.getTemplate(),
-                configuration.getDefaultName()
-            );
-        final TemplateHealthCheck healthCheck =
-                new TemplateHealthCheck(configuration.getTemplate());
-        environment.healthChecks().register("template", healthCheck);
-        environment.jersey().register(resource);
-        
-        ArrayList<String> stopWords = StopWords.loadStopWords(configuration.getStopWordsPath());
-        ArrayList<StemRule> stemRules = StemRule.loadStemRules(configuration.getStemRulesPath());
-        
-        System.out.println(stopWords.get(0));
-        
-        /*
-         	        t = new Thread(new LoanReqCalcProcessor(emailUtils,
-	        		queueCollection, loanDateCollection, loanCollection, accountCollection, userCollection)
-	        		, "Accept Calc Thread");
-	        t.start();
-         */
+        final MongoClient mongoClient = new MongoClient(new MongoClientURI(configuration.getConnectionString()));
+
+        try {
+			final MongoDatabase db = mongoClient.getDatabase(configuration.getDatabase());
+			final MongoCollection<Document> fileCollection = db.getCollection(configuration.getFileCollection());
+			final MongoCollection<Document> wcCollection = db.getCollection(configuration.getWordCountCollection());
+			
+	        final FileResource fileResource = new FileResource(
+	        		configuration.getDocumentPath());
+	        final WordCountResource wcResource = new WordCountResource(fileCollection, wcCollection);
+
+	        environment.jersey().register(fileResource);
+	        environment.jersey().register(wcResource);
+			
+	        ArrayList<String> stopWords = StopWords.loadStopWords(configuration.getStopWordsPath());
+	        ArrayList<StemRule> stemRules = StemRule.loadStemRules(configuration.getStemRulesPath());
+	        
+	/*		String file = "./documents/SampleTextFile_1000kb.txt";
+			
+			Hashtable<String, WordCount> wordCounts = new Hashtable<String, WordCount>();
+			FileProcessor.readFile(wordCounts, stopWords, stemRules, file);
+			PersistResults.persistResults(wordCounts, wcCollection);*/
+	
+	        //Should be it's own service but I think a thread works well for this exercise
+	        Thread t = new Thread(new FileProcessor(fileCollection, wcCollection, stopWords, stemRules), "File Processor");
+		    t.start();
+			System.out.println("testing");
+    	} finally {
+    		//mongoClient.close();
+    	}
     }
 
 }

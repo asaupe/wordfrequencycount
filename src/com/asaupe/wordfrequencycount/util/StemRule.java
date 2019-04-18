@@ -55,6 +55,7 @@ public class StemRule {
 	    		StemRule stemRule = gson.fromJson(line, StemRule.class);
 	    		stemRules.add(stemRule);
 	    	}   
+	    	scanner.close();
         } catch(Exception ex) {
 			System.out.println(ex.getMessage());
 		}
