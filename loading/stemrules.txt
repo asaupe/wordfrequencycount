@@ -1,0 +1,10 @@
+#Pretty simple rule if the ending of the word matches the ending
+#it will remove the ending and replace it with the lettersAdded (creates a stemword)
+#makes no attempt to identify if the word qualifies for the rule
+{"ending":"s","lettersAdded":""}
+{"ending":"es","lettersAdded":""}
+{"ending":"ves","lettersAdded":"f"}
+{"ending":"ves","lettersAdded":"fe"}
+{"ending":"ies","lettersAdded":"y"}
+{"ending":"ing","lettersAdded":""}
+{"ending":"ed","lettersAdded":""}

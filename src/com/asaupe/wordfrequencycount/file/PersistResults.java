@@ -1,5 +1,7 @@
 package com.asaupe.wordfrequencycount.file;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -16,6 +18,7 @@ import com.mongodb.client.MongoDatabase;
 
 public class PersistResults {
 	
+	//TODO: Being kind of lazy here - I should probably create/call an endpoint but direct persist OK for the time limits
 	public static void persistResults(Hashtable<String, WordCount> wordCounts, MongoCollection<Document> wcCollection) {
         Set<String> keys = wordCounts.keySet();
 		Gson gson = new Gson();
@@ -23,26 +26,25 @@ public class PersistResults {
             if (wordCounts.get(key).getActualCount() > 0) {
             	System.out.println("persist actual " + wordCounts.get(key).getWord());
             	System.out.println(gson.toJson(wordCounts.get(key)));
+            	wcCollection.insertOne(Document.parse(gson.toJson(wordCounts.get(key))));
             } else if (wordCounts.get(key).getOriginalWords().size() > 1) {
             	System.out.println("persist stem word " + wordCounts.get(key).getWord());
             	System.out.println(gson.toJson(wordCounts.get(key)));
+            	wcCollection.insertOne(Document.parse(gson.toJson(wordCounts.get(key))));
             } else {
             	System.out.println("skipped " + wordCounts.get(key).getWord());
             }
         }
-		
-/*
-		// 1. Java object to JSON, and save into a file
-		gson.toJson(obj, new FileWriter("D:\\file.json"));
-		
-		// 2. Java object to JSON, and assign to a String
-		String jsonInString = gson.toJson(obj);*/
 	}
 
+    //TESTING ONLY - this main is only provided for doing a testing run
+	//WARNING - if the connection string is correct it will persist to your MongoDB (note: this user no longer exists in my database)
+	//(first arg should be your connection string and second DB)
 	public static void main(String[] args) {
-		final MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb+srv://arne:16isSixteen@arnetest-gtgp9.mongodb.net/test?retryWrites=true"));
+    	final Charset ENCODING = StandardCharsets.UTF_8;
+		final MongoClient mongoClient = new MongoClient(new MongoClientURI(args[0]));
 		try {
-			final MongoDatabase db = mongoClient.getDatabase("ArneTest");
+			final MongoDatabase db = mongoClient.getDatabase(args[1]);
 			final MongoCollection<Document> wcCollection = db.getCollection("wordCounts");
 			
 			ArrayList<StemRule> stemRules = new ArrayList<StemRule>();

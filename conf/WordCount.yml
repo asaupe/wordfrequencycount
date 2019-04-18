@@ -1,2 +1,4 @@
 template: Hello, %s!
 defaultName: Arne
+stopWordsPath: ./loading/stopword.txt
+stemRulesPath: ./loading/stemRules.txt

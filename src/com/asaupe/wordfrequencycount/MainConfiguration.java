@@ -10,6 +10,11 @@ public class MainConfiguration extends Configuration {
 
     @NotEmpty
     private String defaultName = "Stranger";
+    
+    @NotEmpty
+    private String stopWordsPath;
+    @NotEmpty
+    private String stemRulesPath;
 
     @JsonProperty
     public String getTemplate() {
@@ -30,4 +35,22 @@ public class MainConfiguration extends Configuration {
     public void setDefaultName(String name) {
         this.defaultName = name;
     }
+
+    @JsonProperty
+	public String getStopWordsPath() {
+		return stopWordsPath;
+	}
+
+    @JsonProperty
+	public void setStopWordsPath(String stopWordsPath) {
+		this.stopWordsPath = stopWordsPath;
+	}
+
+	public String getStemRulesPath() {
+		return stemRulesPath;
+	}
+
+	public void setStemRulesPath(String stemRulesPath) {
+		this.stemRulesPath = stemRulesPath;
+	}
 }

@@ -95,6 +95,7 @@ public class FileProcessor {
     	}
     }
 
+    //TESTING ONLY - this main is only provided for doing a testing run
 	public static void main(String[] args) {
 		try {
 			ArrayList<StemRule> stemRules = new ArrayList<StemRule>();
@@ -129,8 +130,6 @@ public class FileProcessor {
 		} catch(Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-		
-
 	}
 
 }

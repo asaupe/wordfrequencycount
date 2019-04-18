@@ -4,6 +4,12 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import com.asaupe.wordfrequencycount.resources.HelloWorld;
+import com.asaupe.wordfrequencycount.util.StemRule;
+import com.asaupe.wordfrequencycount.util.StopWords;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+
 import com.asaupe.wordfrequencycount.health.TemplateHealthCheck;
 
 public class MainApplication extends Application<MainConfiguration> {
@@ -32,6 +38,18 @@ public class MainApplication extends Application<MainConfiguration> {
                 new TemplateHealthCheck(configuration.getTemplate());
         environment.healthChecks().register("template", healthCheck);
         environment.jersey().register(resource);
+        
+        ArrayList<String> stopWords = StopWords.loadStopWords(configuration.getStopWordsPath());
+        ArrayList<StemRule> stemRules = StemRule.loadStemRules(configuration.getStemRulesPath());
+        
+        System.out.println(stopWords.get(0));
+        
+        /*
+         	        t = new Thread(new LoanReqCalcProcessor(emailUtils,
+	        		queueCollection, loanDateCollection, loanCollection, accountCollection, userCollection)
+	        		, "Accept Calc Thread");
+	        t.start();
+         */
     }
 
 }
