@@ -33,11 +33,6 @@ public class MainApplication extends Application<MainConfiguration> {
     }
 
     @Override
-    public String getName() {
-        return "hello-world";
-    }
-
-    @Override
     public void initialize(Bootstrap<MainConfiguration> bootstrap) {
         // nothing to do yet
     }
@@ -71,12 +66,6 @@ public class MainApplication extends Application<MainConfiguration> {
 			
 	        ArrayList<String> stopWords = StopWords.loadStopWords(configuration.getStopWordsPath());
 	        ArrayList<StemRule> stemRules = StemRule.loadStemRules(configuration.getStemRulesPath());
-	        
-	/*		String file = "./documents/SampleTextFile_1000kb.txt";
-			
-			Hashtable<String, WordCount> wordCounts = new Hashtable<String, WordCount>();
-			FileProcessor.readFile(wordCounts, stopWords, stemRules, file);
-			PersistResults.persistResults(wordCounts, wcCollection);*/
 	
 	        //Should be it's own service but I think a thread works well for this exercise
 	        Thread t = new Thread(

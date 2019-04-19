@@ -41,6 +41,7 @@ public class FileProcessor implements Runnable {
 	}
 	
 	//TODO: Maybe overloading this to much think about splitting for stem words and actual words
+	//Builds WordCount object for a previous unseen word
 	public static void addNewWordCount(Hashtable<String, WordCount> wordCounts, ArrayList<String> stopWords, ArrayList<StemRule> stemRules, String word, String originalWord) {
 		WordCount wordCount = new WordCount();
 		wordCount.setWord(word);
@@ -62,6 +63,8 @@ public class FileProcessor implements Runnable {
 		}
 	}
 	
+	//Adds to the Stem count if stem word already exists
+	//otherwise adds another word count to the hashtable
 	public static void processStemWord(Hashtable<String, WordCount> wordCounts, String stemWord, String originalWord) {
 		WordCount wc = wordCounts.get(stemWord);
 		if (wc != null) {
@@ -71,6 +74,7 @@ public class FileProcessor implements Runnable {
 		}
 	}
 	
+	//Adds to count if coming from previously unseen original word adds to the list
 	public static void addStemCount(WordCount stemWord, String originalWord) {
 		stemWord.addStemCount();
 		if (!stemWord.getOriginalWords().contains(originalWord)) {
@@ -78,12 +82,14 @@ public class FileProcessor implements Runnable {
 		}
 	}
 	
+	//Adds to actual count - if the word has stem words adds to those counts to
 	public static void addActualCount(Hashtable<String, WordCount> wordCounts, WordCount word) {
 		word.addActualCount();
 		for (String stemWord:word.getStemWords()) {
 			addStemCount(wordCounts.get(stemWord), word.getWord());
 		}
 	}
+	
 	
 	public static void processLine(Hashtable<String, WordCount> wordCounts, ArrayList<String> stopWords, ArrayList<StemRule> stemRules, String line) {
 		List<String> words = Arrays.asList(line.split(" "));
@@ -119,6 +125,8 @@ public class FileProcessor implements Runnable {
     }
     
 
+    //Iterates and waits for a MongoDB record to indicate a new file has been uploaded. 
+    //Runs out of process so the front end does not have to wait for the file to process
 	@Override
 	public void run()  {
 		try {

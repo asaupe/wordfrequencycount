@@ -12,6 +12,9 @@ import com.mongodb.client.MongoCollection;
 public class PersistResults {
 	
 	//TODO: Being kind of lazy here - I should probably create/call an endpoint but direct persist OK for the time limits
+	//Iterates through HashTable and persists to word counts to MongoDB
+	//Skips stem words that were not confirmed
+	//confirmed = An actual appearance or two original words create the stem word
 	public static void persistResults(Hashtable<String, WordCount> wordCounts, MongoCollection<Document> wcCollection, ObjectId fileId) {
         Set<String> keys = wordCounts.keySet();
 		Gson gson = new Gson();
