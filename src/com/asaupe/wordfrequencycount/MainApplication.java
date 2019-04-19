@@ -14,9 +14,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Hashtable;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+
 import org.bson.Document;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import com.asaupe.wordfrequencycount.file.FileProcessor;
 import com.asaupe.wordfrequencycount.file.PersistResults;
@@ -41,7 +46,18 @@ public class MainApplication extends Application<MainConfiguration> {
     public void run(MainConfiguration configuration,
                     Environment environment) {
         final MongoClient mongoClient = new MongoClient(new MongoClientURI(configuration.getConnectionString()));
+        final FilterRegistration.Dynamic cors =
+        		environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
+        //Opening everything up for simplicity - not advisable for a production environment
+        // Configure CORS parameters
+        cors.setInitParameter("allowedOrigins", "*");
+        cors.setInitParameter("allowedHeaders", "Cache-Control,If-Modified-Since,Pragma,Content-Type,Authorization,X-responseuested-With,Content-Length,Accept,Origin");
+        cors.setInitParameter("allowedMethods", "OPTIONS,GET,PUT,POST,DELETE,HEAD");
+
+        // Add URL mapping
+        cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+        
         try {
 			final MongoDatabase db = mongoClient.getDatabase(configuration.getDatabase());
 			final MongoCollection<Document> fileCollection = db.getCollection(configuration.getFileCollection());

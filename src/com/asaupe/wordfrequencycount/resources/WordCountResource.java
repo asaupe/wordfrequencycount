@@ -14,10 +14,12 @@ import javax.ws.rs.core.Response.Status;
 import org.bson.Document;
 import org.json.JSONObject;
 
+import com.asaupe.wordfrequencycount.file.FileStatus;
 import com.codahale.metrics.annotation.Timed;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 
 @Path("/wordcount")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,24 +32,33 @@ public class WordCountResource {
     	this.wcCollection = wcCollection;
     }
 
+    protected List<Document> getWordCount(String fileId, boolean stopWords, boolean stemWords) {
+		List<Document> wordCounts = new ArrayList<Document>();
+		FindIterable<Document> query = wcCollection.find(Filters.eq("fileId", fileId)).limit(25);
+
+		if (!stopWords) {
+			query.filter(Filters.and(Filters.eq("fileId", fileId), Filters.eq("stopWord", false)));
+		}
+		if (stemWords) {
+			query.sort(new Document().append("total", -1));
+		} else {
+			query.sort(new Document().append("actualCount", -1));
+		}
+		return query.into(wordCounts);
+    }
+    
     @GET
     @Timed
-    public Response getFile(@QueryParam("name") String name, @QueryParam("includeStopWords") boolean stopWords, @QueryParam("includeStemWords") boolean stemWords) {
+    public Response getFile(@QueryParam("includeStopWords") boolean stopWords, @QueryParam("includeStemWords") boolean stemWords) {
     	try {
-    		List<Document> wordCounts = new ArrayList<Document>();
-    		FindIterable<Document> query = wcCollection.find().limit(25);
-
-    		if (!stopWords) {
-    			query.filter(new Document().append("stopWord", false));
+    		ArrayList<Document> files = new ArrayList<Document>();
+    		fileCollection.find(Filters.eq("status", FileStatus.done.name())).sort(new Document().append("actionTaken", -1)).limit(10).into(files);
+    		
+    		for(Document file:files) {
+        		List<Document> wordCounts = getWordCount(file.getObjectId("_id").toString(), stopWords, stemWords);
+        		file.append("wordCounts", wordCounts);
     		}
-    		if (stemWords) {
-    			query.sort(new Document().append("total", -1));
-    		} else {
-    			query.sort(new Document().append("actualCount", -1));
-    		}
-    		query.into(wordCounts);
-
-	        return Response.status(Status.OK).entity(new JSONObject().put("count", wordCounts.size()).put("wordCounts", wordCounts).toString()).build();
+	        return Response.status(Status.OK).entity(new JSONObject().put("count", files.size()).put("files", files).toString()).build();
     	} catch (Exception ex) {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
     	}
