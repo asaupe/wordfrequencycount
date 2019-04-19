@@ -2,9 +2,9 @@
 This is a coding exercise I went through. It's does word frequency counting taking into account stop words and attempts to do some stemming. It's not 100% accurate nor does it make an attempt to be.
 
 ## Technology
-Dropwizard - For REST API development (Java)
-React - for building front-end website
-MongoDB Atlas - For storage
+*Dropwizard - For REST API development (Java)
+*React - for building front-end website
+*MongoDB Atlas - For storage
 
 ## The Approach
 ### Words counted
