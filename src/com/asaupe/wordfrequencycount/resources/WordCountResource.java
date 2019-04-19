@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import com.asaupe.wordfrequencycount.file.FileStatus;
 import com.codahale.metrics.annotation.Timed;
-import com.google.gson.GsonBuilder;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;

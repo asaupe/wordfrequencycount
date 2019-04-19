@@ -63,8 +63,7 @@ public class MainApplication extends Application<MainConfiguration> {
 			final MongoCollection<Document> fileCollection = db.getCollection(configuration.getFileCollection());
 			final MongoCollection<Document> wcCollection = db.getCollection(configuration.getWordCountCollection());
 			
-	        final FileResource fileResource = new FileResource(
-	        		configuration.getDocumentPath());
+	        final FileResource fileResource = new FileResource(configuration.getDocumentPath(), fileCollection);
 	        final WordCountResource wcResource = new WordCountResource(fileCollection, wcCollection);
 
 	        environment.jersey().register(fileResource);
@@ -80,7 +79,9 @@ public class MainApplication extends Application<MainConfiguration> {
 			PersistResults.persistResults(wordCounts, wcCollection);*/
 	
 	        //Should be it's own service but I think a thread works well for this exercise
-	        Thread t = new Thread(new FileProcessor(fileCollection, wcCollection, stopWords, stemRules), "File Processor");
+	        Thread t = new Thread(
+	        		new FileProcessor(fileCollection, wcCollection, stopWords, stemRules, configuration.getDocumentPath()), 
+	        		"File Processor");
 		    t.start();
 			System.out.println("testing");
     	} finally {

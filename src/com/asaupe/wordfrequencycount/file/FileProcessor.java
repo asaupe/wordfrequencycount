@@ -28,14 +28,16 @@ public class FileProcessor implements Runnable {
 	private MongoCollection<Document> wcCollection;
     private ArrayList<String> stopWords;
     private ArrayList<StemRule> stemRules;
+    private String filePathTemplate;
 
 	
 	public FileProcessor(MongoCollection<Document> fileCollection, MongoCollection<Document> wcCollection, ArrayList<String> stopWords,
-			ArrayList<StemRule> stemRules) {
+			ArrayList<StemRule> stemRules, String filePathTemplate) {
 		this.fileCollection = fileCollection;
 		this.wcCollection = wcCollection;
 		this.stopWords = stopWords;
 		this.stemRules = stemRules;
+		this.filePathTemplate = filePathTemplate;
 	}
 	
 	//TODO: Maybe overloading this to much think about splitting for stem words and actual words
@@ -133,7 +135,8 @@ public class FileProcessor implements Runnable {
 				        thisQuery.put("_id", executionDoc.get("_id"));
 				        
 						Hashtable<String, WordCount> wordCounts = new Hashtable<String, WordCount>();
-						FileProcessor.readFile(wordCounts, stopWords, stemRules, executionDoc.getString("filePath"));
+						String filePath = this.filePathTemplate.concat(executionDoc.getString("fileName")).concat(".txt");
+						FileProcessor.readFile(wordCounts, stopWords, stemRules, filePath);
 						PersistResults.persistResults(wordCounts, wcCollection, executionDoc.getObjectId("_id"));
 				        
 						Instant inst = Instant.now();

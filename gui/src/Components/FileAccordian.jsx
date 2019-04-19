@@ -24,7 +24,8 @@ class FileAccordian extends Component {
           files: [],
           stemWords: true,
           stopWords: true,
-          selectedFile: null
+          selectedFile: null,
+          fileStatus: ''
         }
         this.onChangeStopWords = this.onChangeStopWords.bind(this)
         this.onChangeStemWord = this.onChangeStemWord.bind(this)
@@ -62,6 +63,7 @@ class FileAccordian extends Component {
         this.setState({
             selectedFile: event.target.files[0],
             loaded: 0,
+            fileStatus: ''
         })
     }
 
@@ -71,7 +73,9 @@ class FileAccordian extends Component {
         axios.post("http://localhost:8080/file/upload", data, { // receive two parameter endpoint url ,form data 
         })
         .then(res => { // then print response status
+            this.setState({ fileStatus: 'Your file was successfully uploaded for processing.'})
             console.log(res.statusText)
+
         })
     }
 
@@ -81,7 +85,8 @@ class FileAccordian extends Component {
                 <h3>Upload File</h3>
                 <div align='left'>
                     <input type="file" name="file" onChange={this.onChangeHandler}/><br />
-                    <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload</button>
+                    <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload</button><br />
+                    {this.state.fileStatus}
                 </div>
                 <h3>Review Word Counts</h3>
                 <div align="left">
