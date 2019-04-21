@@ -20,4 +20,4 @@ Stemming is achieved using simple stem rules. The stem rule contains an ending t
 A stem word is only persisted to MongoDB if it occurs in the document or if it is a stem word of multiple original words in the document.
 
 ### File uploading / processing
-The user can upload a file for processing. The file is persisted to the web server file system and a document is saved to MongoDB indicating the file is ready for word count processing. The API will send back a success record when the persisting is complete. The separate thread will pick up the file for processing and persisting the word count results to MongoDB.
+The user can upload a file for processing. The file is persisted to the web server file system and a document is saved to MongoDB indicating the file is ready for word count processing. The API will send back a success record when the persisting is complete. A separate thread will pick up the file for processing and persisting the word count results to MongoDB.
